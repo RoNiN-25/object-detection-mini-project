@@ -23,13 +23,8 @@ When it comes to object detection, popular detection frameworks are
  
  `$ wget https://pjreddie.com/media/files/yolov3.weights`
  
- Provided all the files are in the current directory, below command will apply object detection on the input image `dog.jpg`.
- 
- `$ python yolo_opencv.py --image dog.jpg --config yolov3.cfg --weights yolov3.weights --classes yolov3.txt`
  
  Uses the webcam of your laptop to record video. Perfroms object detection on the live video.
  
 Checkout the object detection implementation available in [cvlib](http:cvlib.net) which enables detecting common objects in the context through a single function call `detect_common_objects()`.
  
- 
- (_SSD and Faster R-CNN examples will be added soon_)
