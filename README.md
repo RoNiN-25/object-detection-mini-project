@@ -27,15 +27,7 @@ When it comes to object detection, popular detection frameworks are
  
  `$ python yolo_opencv.py --image dog.jpg --config yolov3.cfg --weights yolov3.weights --classes yolov3.txt`
  
- 
- **Command format** 
- 
- _$ python yolo_opencv.py --image /path/to/input/image --config /path/to/config/file --weights /path/to/weights/file --classes /path/to/classes/file_
- 
- Checkout the [blog post](http://www.arunponnusamy.com/yolo-object-detection-opencv-python.html) to learn more.
- 
- ### sample output :
- ![](object-detection.jpg)
+ Uses the webcam of your laptop to record video. Perfroms object detection on the live video.
  
 Checkout the object detection implementation available in [cvlib](http:cvlib.net) which enables detecting common objects in the context through a single function call `detect_common_objects()`.
  
