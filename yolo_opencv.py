@@ -62,6 +62,7 @@ def number_points(a,boxes):
 scale = 0.00392
 classes = None
 
+prev = [0,0,0,0]
 
 lower_color = np.array([110, 50, 50])
 upper_color = np.array([130 , 255 , 255])
@@ -157,8 +158,27 @@ while (1):
             x2 = round(fff[2][0][0])
             y2 = round(fff[2][0][1])
             cv2.rectangle(image, (x1,y1), (x2,y2), (255,255,255), 5)
+            if(prev[0]-x1>=25):
+                print("Move right")
+            
+            elif(prev[0]-x1<-25):
+                print("Move left")
+            
+            if((prev[0]-prev[2])*(prev[1]-prev[3])>1.2*(x1-x2)*(y1-y2)):
+                print("Move forward")
+            elif((prev[0]-prev[2])*(prev[1]-prev[3])<0.8*(x1-x2)*(y1-y2)):
+                print("Move backward")
+            else:
+                print("Stay")
+            
+            prev[0]=x1
+            prev[1]=y1
+            prev[2]=x2
+            prev[3]=y2
+            
         else:
             print("No object to follow")
+        
         
         
         
