@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
+import zmq
 import time
-
 
 
 def get_output_layers(net):
@@ -62,7 +62,13 @@ def number_points(a,boxes):
 scale = 0.00392
 classes = None
 
-prev = [0,0,0,0]
+context = zmq.Context()
+socket = context.socket(zmq.REP)  #Reply socket. Gives info about something
+socket.bind("tcp://127.0.0.1:5555")
+
+
+prev1 = [0,0,0,0]
+prev2 = [0,0,0,0]
 
 lower_color = np.array([110, 50, 50])
 upper_color = np.array([130 , 255 , 255])
@@ -74,10 +80,13 @@ net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
 
 hhh=0
 sum=0.0
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 while (1):
    # start = time.time()
-    _,image = cap.read()
+    #_,image = cap.read()
+    message = socket.recv()
+    arr = np.frombuffer(message,np.uint8)
+    image = cv2.imdecode(arr, cv2.IMREAD_COLOR)
     
     
 
@@ -158,23 +167,28 @@ while (1):
             x2 = round(fff[2][0][0])
             y2 = round(fff[2][0][1])
             cv2.rectangle(image, (x1,y1), (x2,y2), (255,255,255), 5)
-            if(prev[0]-x1>=25):
+            if(prev1[0]-x1>=25 and prev2[0]-prev1[0]>=25):
                 print("Move right")
             
-            elif(prev[0]-x1<-25):
+            elif(prev1[0]-x1<-25 and prev2[0]-prev1[0]<-30):
                 print("Move left")
             
-            if((prev[0]-prev[2])*(prev[1]-prev[3])>1.2*(x1-x2)*(y1-y2)):
+            if((prev1[0]-prev1[2])*(prev1[1]-prev1[3])>1.2*(x1-x2)*(y1-y2) and (prev2[0]-prev2[2])*(prev2[1]-prev2[3])>0.8*(prev1[0]-prev1[2])*(prev1[1]-prev1[3])):
                 print("Move forward")
-            elif((prev[0]-prev[2])*(prev[1]-prev[3])<0.8*(x1-x2)*(y1-y2)):
+            elif((prev1[0]-prev1[2])*(prev1[1]-prev1[3])<0.8*(x1-x2)*(y1-y2) and (prev2[0]-prev2[2])*(prev2[1]-prev2[3])<1.2*(prev1[0]-prev1[2])*(prev1[1]-prev1[3])):
                 print("Move backward")
             else:
                 print("Stay")
             
-            prev[0]=x1
-            prev[1]=y1
-            prev[2]=x2
-            prev[3]=y2
+            prev2[0]=prev1[0]
+            prev2[1]=prev1[1]
+            prev2[2]=prev1[2]
+            prev2[3]=prev1[3]
+            
+            prev1[0]=x1
+            prev1[1]=y1
+            prev1[2]=x2
+            prev1[3]=y2
             
         else:
             print("No object to follow")
@@ -197,7 +211,10 @@ while (1):
     
     k=cv2.waitKey(5) & 0xFF
     if k==27:
+        socket.send(b"Stop")
         break
+    else:
+        socket.send(b"OK")
 
 
 cap.release()
