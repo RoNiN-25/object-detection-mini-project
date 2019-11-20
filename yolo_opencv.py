@@ -50,8 +50,9 @@ def number_points(a,boxes):
                 num=num+1
         number.append(num)
     
+   print(number) 
    if(number !=[]):
-       k = number.index(max(number))
+       k = number.index(min(number))
        return cnt[k].tolist()
    else:
        return None
@@ -64,7 +65,7 @@ classes = None
 
 context = zmq.Context()
 socket = context.socket(zmq.REP)  #Reply socket. Gives info about something
-socket.bind("tcp://*:5556")
+socket.bind("tcp://*:5558")
 
 
 prev1 = [0,0,0,0]
@@ -76,7 +77,9 @@ upper_color = np.array([130 , 255 , 255])
 with open("yolov3.txt", 'r') as f:
     classes = [line.strip() for line in f.readlines()]
 COLORS = np.random.uniform(0, 255, size=(len(classes), 3))
-net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
+net = cv2.dnn.readNetFromDarknet("yolov3.cfg", "yolov3.weights")
+#net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
 
 hhh=0
 sum=0.0
@@ -96,7 +99,7 @@ while (1):
     
 
     
-    if(hhh%10==0):
+    if(hhh%2==0):
         Width = image.shape[1]
         Height = image.shape[0]
 
@@ -157,6 +160,7 @@ while (1):
         
         #cv2.imshow('frame',image)
         cv2.imshow('mask',mask)
+        np.set_printoptions(threshold=np.inf)
         #cv2.imshow('res',res)
         
 
