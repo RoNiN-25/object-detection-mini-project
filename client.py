@@ -14,7 +14,7 @@ cap = cv2.VideoCapture(0)
 #  Socket to talk to server
 print("Connecting to server…")
 socket = context.socket(zmq.REQ)  #Request socket. Asks for info about something
-socket.connect("tcp://172.16.171.76:5556")
+socket.connect("tcp://localhost:5558")
 
 
 while(1):
@@ -40,8 +40,8 @@ while(1):
         '''Move Right'''
     elif(message == b'St'):
         print("Received reply ",message)
-        '''Stay'''
-
+        '''Stay''' 
+    
     #print("Received reply ",message)
 cap.release()
 socket.close()
